@@ -1,0 +1,67 @@
+﻿@model IEnumerable<NewsSite.Models.Article>
+@{
+    ViewBag.Title = "SlideShow";
+    Layout = null;
+}
+
+<h2></h2>
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+    </style>
+</head>
+<body>
+
+
+    @foreach (var item in Model)
+    {
+
+
+        /* <div class="fakeimg">  */
+        <div class="slideshow-container">
+            <div class="mySlides fade">
+                <img src="@Html.DisplayFor(modelItem => item.UrlToImage)" style="width:100%" />
+                <div class="text">
+                    <a href="@Url.Action("GetHeadLines", "Apis")" style="color: white;">@item.Title</a>
+                </div>
+            </div>
+        </div>
+    }
+
+
+    <br>
+
+    <div style="text-align:center">
+        <span class="dot" onclick="currentSlide(1)"></span>
+        <span class="dot" onclick="currentSlide(2)"></span>
+        <span class="dot" onclick="currentSlide(3)"></span>
+    </div>
+
+    <script>
+
+
+        var myIndex = 0;
+        carousel();
+
+        function carousel() {
+            var i;
+            var x = document.getElementsByClassName("mySlides");
+            for (i = 0; i < x.length; i++) {
+                x[i].style.display = "none";
+            }
+            myIndex++;
+            if (myIndex > x.length) { myIndex = 1 }
+            x[myIndex - 1].style.display = "block";
+
+
+            setTimeout(carousel, 6000);
+        }
+    </script>
+
+</body>
+</html>
+
+

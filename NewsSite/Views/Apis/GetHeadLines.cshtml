@@ -1,0 +1,184 @@
+﻿@model IEnumerable<NewsSite.Models.Article>
+
+@{
+    ViewBag.Title = "GetHeadLines";
+}
+<html>
+<head>
+        <style>
+            * {
+                box-sizing: border-box;
+            }
+
+
+            /* Add a gray background color with some padding*/
+            body {
+                /*font-family: 'Montserrat', sans-serif; */
+                font-family: Inter,Helvetica,Arial,sans-serif;
+                padding: 20px;
+                background: white;
+            }
+
+            
+            /* Header/Blog Title*/
+            .header {
+                padding: 30px;
+                font-size: 40px;
+                text-align: center;
+                background: white;
+            }
+
+            /* Create two unequal columns that floats next to each other */
+            /* Left column */
+            .leftcolumn {
+                float: left;
+                width: 70%;
+            }
+
+            /* Right column */
+            .rightcolumn {
+                float: left;
+                width: 10%;
+                padding-left: 20px;
+            }
+
+            /* Fake image */
+            .fakeimg {
+                background-color: white;
+                padding: 20px;
+                text-align: center;
+                max-width: 100%;
+                height: auto;
+            }
+
+            p {
+                text-align: center;
+            }
+
+            .card {
+                padding: 20px;
+                margin-top: 20px;
+                background-color: white;
+                border-radius: 0px;
+                border-color: white;
+            }
+
+       
+
+            /* Clear floats after the columns */
+            .row:after {
+                content: "";
+                display: table;
+                clear: both;
+            }
+
+            .btn-default {
+                color: #0096D9;
+                background-color: white;
+                border-color: #cccccc;
+                text-align: center;
+            }
+
+                .btn-default:hover {
+                    color: white;
+                    background-color: #0096D9;
+                    border-color: #adadad;
+                }
+
+            .img_logo {
+                width: auto;
+            }
+
+            .pagination {
+                display: inline-block;
+                margin-right: 5px;
+                margin-top: 20px;
+                border: 1px solid #fff;
+                box-sizing: border-box;
+            }
+
+                .pagination a {
+                    color: #2196d8;
+                    float: left;
+                    padding: 8px 16px;
+                    text-decoration: none;
+                    font-weight: bold;
+                }
+
+                    .pagination a.active {
+                        background-color: #2196d8;
+                        color: white;
+                        border-radius: 5px;
+                    }
+
+                    .pagination a:hover:not(.active) {
+                        background-color: #ddd;
+                        border-radius: 5px;
+                    }
+
+            a {
+                color: black;
+                font-family: 'Montserrat-Light';
+                text-align: center;
+            }
+
+            .vl {
+                border-right: 1px solid #BEBEBE;
+                height: 600px;
+                position: absolute;
+                right: 28%;
+                margin-left: -3px;
+                top: 0;
+                margin-top: 700px;
+            }
+
+            hr {
+                border-top: 1px solid #BEBEBE;
+                width: 1200px;
+            }
+        </style>
+</head>
+<body>
+    <header>
+        @Html.Action("SlideShow")
+    </header>
+    <hr />
+<div class="row">
+    <div class="leftcolumn">
+
+
+        @foreach (var item in Model)
+        {
+            <div class="card">
+
+               <div class="vl"></div>
+                <h2 style="text-align: center;">@Html.ActionLink(item.Title, "ViewArticle", "Apis")</h2>
+
+                 <div class="fakeimg">
+                    <img src="@Html.DisplayFor(modelItem => item.UrlToImage)" , width="600" />
+                </div>
+
+                <div class="under" style="text-align: center;">
+                    @Html.DisplayFor(modelItem => item.Description)
+                </div>
+
+               @if (item.Author != null)
+               {
+                <div class="under" style="text-align: center; margin-top: 5px;">
+                    By <strong>@Html.DisplayFor(modelItem => item.Author)</strong>
+                </div>
+               }
+     
+            </div>
+
+        }
+    </div>
+
+
+    <div class="rightcolumn">
+        @Html.Action("GetUsNews")
+    </div>
+</div>
+
+ </body>
+</html>

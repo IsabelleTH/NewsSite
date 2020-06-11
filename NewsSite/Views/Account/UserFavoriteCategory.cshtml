@@ -1,0 +1,42 @@
+﻿@model List<NewsSite.Models.Category>
+
+<h2>Welcome to your personilaze page!</h2>
+
+<p>You have a chance to custom your news feed here. Simply just pick the most interesting category you would like to get news on.</p>
+
+@using(Html.BeginForm("UserFavoriteCategory", "Account"))
+{
+    <h4>What news are you interested in?</h4>
+    <table>
+        @foreach(var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.RadioButton("Category", item.Id, item.IsSelected, new { @id = item.Id})
+                </td>
+                <td>
+                    @Html.Label(item.CategoryName, new { @for = item.Id})
+                </td>
+            </tr>
+        }
+    </table>
+    <br />
+    @Html.Hidden("categoryId", 1, new { @id = "categoryId" });
+     <input type="submit" value="Save" />
+}
+
+<script>
+    window.onload = function () {
+        var selectedCategoryIdElement = document.getElementById("categoryId");
+        var radioButtons = document.querySelectorAll("input[type=radio]");
+
+        for (var i = 0; i < radioButtons.length; i++) {
+            radiobuttons[i].checked = false;
+            radioButtons[i].addEventListener("click", function (e) {
+                selectedCategoryIdElement.value = this.value;
+            });
+        }
+    }
+</script>
+
+

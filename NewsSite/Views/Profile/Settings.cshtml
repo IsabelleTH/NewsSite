@@ -1,0 +1,25 @@
+﻿@{
+    ViewBag.Title = "Settings";
+}
+
+<style>
+    a {
+        background-color: #aa3d54;
+        margin-left: 5px;
+    }
+</style>
+
+
+
+<h3>Hi @User.Identity.Name what would you like to do?</h3>
+
+
+
+<div class="edit">
+    @Html.ActionLink("Change profile picture", "EditProfilePicture", "Profile")
+
+    @Html.ActionLink("Change user name", "EditUserName", "Profile")
+
+    @Html.ActionLink("Change password", "ChangePassword", "Account")
+
+</div>

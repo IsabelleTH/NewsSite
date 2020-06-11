@@ -1,0 +1,112 @@
+﻿@model IEnumerable<NewsSite.Models.Article>
+
+@{
+    ViewBag.Title = "GetPopularPosts";
+    Layout = null;
+}
+
+<html>
+<head>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        /* Add a gray background color with some padding*/
+        body {
+            /*font-family: 'Montserrat', sans-serif; */
+            padding: 20px;
+            background: white;
+        }
+
+        h3 {
+            color: black;
+            text-align: center;
+         
+        }
+        /* Header/Blog Title*/
+        .header {
+            padding: 30px;
+            font-size: 40px;
+            text-align: center;
+            background: white;
+        }
+
+    /* Right column */
+    .rightcolumn {
+    float: left;
+    width: 25%;
+    padding-left: 20px;
+    }
+
+     .fakeimg {
+            background-color: white;
+            padding: 20px;
+            text-align: center;
+            max-width: 100%;
+            height: auto;
+        }
+
+   
+        .card-small {
+            margin-left: 35px;
+            padding-top: 20px;
+            text-align: center;
+            height: 300px;
+            width: 300px;
+            border-color: white;
+            background-color: white;
+         
+        }
+
+        ul {
+            list-style: none;
+        }
+
+          
+
+        .link {
+            color: black;
+            text-decoration: none;
+            padding-right: 1px;
+            float: left;
+            padding-bottom: 10px;
+            margin-top: 15px;
+        }
+
+            .link:hover {
+                background-color: white;
+                color: #555555;
+            }
+
+    .content img {
+        float: left;
+    }
+    </style>
+</head>
+
+<body>
+    <div class="row">
+        <div class="rightcolumn">
+            <div class="card-small">
+                <h3 style="padding-top: 5px; padding-bottom: 5px; margin-top: 60px; margin-left: 25px;">Popular Swedish News</h3>
+                @foreach (var item in Model)
+                {
+                    const int MaxLength = 19;
+
+                    var name = item.Title;
+                    if (name.Length > MaxLength)
+                    {
+                        name = name.Substring(0, MaxLength);
+                    }
+
+                    <ul>
+                        <a class="link" href="@Url.Action("ViewBlog", "Blog", new { blogUrl = item.Url })"><li>@item.Title</li></a>
+                    </ul>
+
+                }
+            </div>
+        </div>
+    </div>
+</body>
+</html>

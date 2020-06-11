@@ -1,0 +1,38 @@
+﻿@model NewsSite.Models.ApplicationUser
+@{
+    ViewBag.Title = "EditProfilePicture";
+}
+
+<h2>Change Profile Picture</h2>
+
+<h3>
+    <span class="alert-success">
+        @ViewBag.Message
+    </span>
+</h3>
+<h3>
+    <span class="alert-danger">
+        @ViewBag.Error
+    </span>
+</h3>
+
+@using (Html.BeginForm("EditProfilePicture", "Profile", FormMethod.Post, new { @class = "form-horizontal", role = "form", enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        <div class="form-group">
+            @Html.LabelFor(m => m.UserPhoto, new { @class = "col-md-2 control-label" })
+
+            <input type="file" name="UserPhoto" id="fileUpload" accept=".png,.jpg,.jpeg,.gif,.tif" />
+
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Update" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+}
+
