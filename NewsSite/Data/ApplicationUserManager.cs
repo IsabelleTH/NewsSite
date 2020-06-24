@@ -4,6 +4,7 @@ using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin;
 using NewsSite.Models;
 using System;
+using static NewsSite.App_Start.IdentityConfig;
 
 namespace NewsSite.Data
 {
@@ -27,6 +28,16 @@ namespace NewsSite.Data
             manager.UserLockoutEnabledByDefault = true;
             manager.DefaultAccountLockoutTimeSpan = TimeSpan.FromMinutes(5);
             manager.MaxFailedAccessAttemptsBeforeLockout = 5;
+
+            manager.EmailService = new EmailService();
+            var dataProtectionProvider = options.DataProtectionProvider;
+            if(dataProtectionProvider != null)
+            {
+                manager.UserTokenProvider = new DataProtectorTokenProvider<ApplicationUser>(dataProtectionProvider.Create("ASP.NET Identity"))
+                {
+                    TokenLifespan = TimeSpan.FromHours(3)
+                };
+            }
 
             return manager;
         }

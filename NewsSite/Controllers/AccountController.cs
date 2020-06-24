@@ -4,8 +4,9 @@ using Microsoft.Owin.Security;
 using NewsSite.Data;
 using NewsSite.Models;
 using NewsSite.Models.ViewModel;
+using SendGrid;
+using SendGrid.Helpers.Mail;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -14,6 +15,7 @@ using System.Web.Mvc;
 
 namespace NewsSite.Controllers
 {
+    [Authorize]
     public class AccountController : Controller
     {
 
@@ -64,7 +66,7 @@ namespace NewsSite.Controllers
         }
 
 
-
+        [AllowAnonymous]
         public ActionResult Login()
         {
             
@@ -73,6 +75,7 @@ namespace NewsSite.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [AllowAnonymous]
         public async Task<ActionResult> Login(LoginViewModel model)
         { 
             if(!ModelState.IsValid)
@@ -93,6 +96,7 @@ namespace NewsSite.Controllers
             }
         }
 
+        [AllowAnonymous]
         public ActionResult Register()
         {
             return View();
@@ -100,13 +104,15 @@ namespace NewsSite.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [AllowAnonymous]
         public async Task<ActionResult> Register([Bind(Exclude ="UserPhoto")] RegisterViewModel model)
         {
             if(ModelState.IsValid)
             {
 
-            //First, convert the chosen photo to byte array before saving it to DB
-            byte[] imageData = null;
+               
+                //First, convert the chosen photo to byte array before saving it to DB
+                byte[] imageData = null;
             if(Request.Files.Count > 0)
             {
                 HttpPostedFileBase fileBase = Request.Files["UserPhoto"];
@@ -122,14 +128,51 @@ namespace NewsSite.Controllers
                 var result = await UserManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
-                    await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
+                    var code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
+                    var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
 
-                    return RedirectToAction("Index", "Apis");
+                    await UserManager.SendEmailAsync(user.Id, "Confirm your account", "Please confirm your" +
+                        "account by clicking this link: <a href=\""
+                                               + callbackUrl + "\">link</a>");
+                    ViewBag.Email = "Please check your email and confirm your email address ";
+                    return View();
                 }
 
             }
             // If we got this far, something failed, redisplay form
             return View(model);
+        }
+
+        [AllowAnonymous]
+        public async Task<ActionResult> ConfirmEmail(string userId, string code)
+        {
+            if(userId == null || code == null)
+            {
+                return View("Error");
+            }
+
+            IdentityResult result;
+
+            try
+            {
+                result = await UserManager.ConfirmEmailAsync(userId, code);
+            }
+            catch(InvalidOperationException ioe)
+            {
+                // ConfirmEmailAsync throws when the userId is not found.
+                ViewBag.errorMessage = ioe.Message;
+                return View("Error");
+                        
+            }
+
+            if(result.Succeeded)
+            {
+                return RedirectToAction("ResetPassword", "Account");
+            }
+
+            // If we got this far, something failed.
+            ViewBag.errorMessage = "ConfirmEmail failed";
+            return View("Error");
         }
 
         public FileContentResult UserPhotos()
@@ -169,6 +212,69 @@ namespace NewsSite.Controllers
             }
         }
 
+        [AllowAnonymous]
+        public ActionResult ForgotPassword()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [AllowAnonymous]
+        public async Task<ActionResult> ForgotPassword(ChangePasswordViewModel model)
+        {
+            if(ModelState.IsValid)
+            {
+                //Check if user exists in database
+                var user = await UserManager.FindByEmailAsync(model.Email);
+                //if not
+                if(user == null)
+                {
+                    ViewBag.Error = "Could not send email";
+                    return View("ForgotPasswordConfirmation");
+                }
+
+                var code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
+                var callbackUrl = Url.Action("ResetPassword", "Account", new { userId = user.Id, cCode = code }, protocol: Request.Url.Scheme);
+                await UserManager.SendEmailAsync(user.Id, "Reset Password",
+                "Please reset your password by clicking here: <a href=\"" + callbackUrl + "\">link</a>");
+                return View("ForgotPasswordConfirmation");
+            }
+            ViewBag.Error = "Could not send email";
+            return View();
+        }
+
+        [AllowAnonymous]
+        public ActionResult ResetPassword()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [AllowAnonymous]
+        public async Task<ActionResult> ResetPassword(ChangePasswordViewModel model)
+        {
+            var dbContext = new ApplicationDbContext();
+
+            var userId = User.Identity.GetUserId();
+            var result = await UserManager.ChangePasswordAsync(userId, model.OldPassword, model.NewPassword);
+
+            if(result.Succeeded)
+            {
+                var user = await UserManager.FindByIdAsync(userId);
+                if(user != null)
+                {
+                    await SignInManager.SignInAsync(user, false, false);
+                }
+
+                ViewBag.Success = "The password has been updated";
+                return View();
+            }
+            ViewBag.Error = "The password was incorrect";
+            return View();
+        }
+
         //GET
         [Authorize]
         public ActionResult UserFavoriteCategory()
@@ -193,35 +299,6 @@ namespace NewsSite.Controllers
             //Implement redirection to the category headlines here if we would like to
 
             return RedirectToAction("Index", "Apis");
-        }
-
-        public ActionResult ChangePassword()
-        {
-            return View();
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<ActionResult> ChangePassword(ChangePasswordViewModel model)
-        {
-            var dbContext = new ApplicationDbContext();
-
-            var userId = User.Identity.GetUserId();
-            var result = await UserManager.ChangePasswordAsync(userId, model.OldPassword, model.NewPassword);
-
-            if(result.Succeeded)
-            {
-                var user = await UserManager.FindByIdAsync(userId);
-                if(user != null)
-                {
-                    await SignInManager.SignInAsync(user, false, false);
-                }
-
-                ViewBag.Success = "The password has been updated";
-                return View();
-            }
-            ViewBag.Error = "The password was incorrect";
-            return View();
         }
 
         //Log out

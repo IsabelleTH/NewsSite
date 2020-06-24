@@ -8,6 +8,8 @@ namespace NewsSite.Models
 {
     public class ChangePasswordViewModel
     {
+        [DataType(DataType.EmailAddress)]
+        public string Email { get; set; }
         [Display(Name = "Old password")]
         [DataType(DataType.Password)]
         public string OldPassword { get; set; }
