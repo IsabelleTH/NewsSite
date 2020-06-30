@@ -2,6 +2,7 @@
 using System.Web.Mvc;
 using NewsSite.Service;
 using NewsSite.Models;
+using System;
 
 namespace NewsSite.Controllers
 {
@@ -10,7 +11,8 @@ namespace NewsSite.Controllers
         // GET: News
         public ActionResult Index()
         {
-            NewsApiClient client = new NewsApiClient("25e1ebfe8acb430a9a5cfa7388a0b288");
+            var apiKey = Environment.GetEnvironmentVariable("NEWS_API_KEY");
+            NewsApiClient client = new NewsApiClient(apiKey);
             var headLines = client.GetLiveUpdates();
             return View(headLines);
         }
@@ -18,14 +20,16 @@ namespace NewsSite.Controllers
 
         public ActionResult GetHeadLines()
         {
-            NewsApiClient client = new NewsApiClient("25e1ebfe8acb430a9a5cfa7388a0b288");
+            var apiKey = Environment.GetEnvironmentVariable("NEWS_API_KEY");
+            NewsApiClient client = new NewsApiClient(apiKey);
             var headLines = client.GetLiveUpdates();
             return View(headLines);
         }
 
         public ActionResult ImageSlide()
         {
-            NewsApiClient client = new NewsApiClient("25e1ebfe8acb430a9a5cfa7388a0b288");
+            var apiKey = Environment.GetEnvironmentVariable("NEWS_API_KEY");
+            NewsApiClient client = new NewsApiClient(apiKey);
             var getData = client.GetLiveUpdates();
             return View(getData);
         }
@@ -37,7 +41,8 @@ namespace NewsSite.Controllers
                 return View(new List<Article>());
             } else
             {
-                NewsApiClient client = new NewsApiClient("25e1ebfe8acb430a9a5cfa7388a0b288");
+                var apiKey = Environment.GetEnvironmentVariable("NEWS_API_KEY");
+                NewsApiClient client = new NewsApiClient(apiKey);
                 var searchArticles = client.SearchArticles(query);
                 return View(searchArticles);
             }
@@ -45,7 +50,8 @@ namespace NewsSite.Controllers
 
         public ActionResult GetPopularPosts()
         {
-            NewsApiClient client = new NewsApiClient("25e1ebfe8acb430a9a5cfa7388a0b288");
+            var apiKey = Environment.GetEnvironmentVariable("NEWS_API_KEY");
+            NewsApiClient client = new NewsApiClient(apiKey);
             var popularPosts = client.PopularSwedishPosts();
 
             return View(popularPosts);
@@ -68,7 +74,8 @@ namespace NewsSite.Controllers
                 return View(new List<Article>());
             } else
             {
-                NewsApiClient client = new NewsApiClient("25e1ebfe8acb430a9a5cfa7388a0b288");
+                var apiKey = Environment.GetEnvironmentVariable("NEWS_API_KEY");
+                NewsApiClient client = new NewsApiClient(apiKey);
                 var category = client.Categories(query);
 
                 return View(category);
@@ -78,7 +85,8 @@ namespace NewsSite.Controllers
 
         public ActionResult SlideShow()
         {
-            NewsApiClient client = new NewsApiClient("25e1ebfe8acb430a9a5cfa7388a0b288");
+            var apiKey = Environment.GetEnvironmentVariable("NEWS_API_KEY");
+            NewsApiClient client = new NewsApiClient(apiKey);
             var popularPosts = client.PopularSwedishPosts();
 
             return View(popularPosts);
@@ -86,7 +94,8 @@ namespace NewsSite.Controllers
 
         public ActionResult GetUsNews()
         {
-            NewsApiClient client = new NewsApiClient("25e1ebfe8acb430a9a5cfa7388a0b288");
+            var apiKey = Environment.GetEnvironmentVariable("NEWS_API_KEY");
+            NewsApiClient client = new NewsApiClient(apiKey);
             var usNews = client.PopularUsNews();
 
             return View(usNews);

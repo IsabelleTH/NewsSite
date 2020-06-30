@@ -12,8 +12,8 @@ namespace NewsSite.Service
 {
     public class NewsApiClient
     {
-        
-        private readonly string _apiKey = "";
+
+        private readonly string _apiKey = Environment.GetEnvironmentVariable("NEWS_API_KEY");
         
     
         public NewsApiClient(string apiKey)
