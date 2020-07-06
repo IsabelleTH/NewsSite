@@ -1,23 +1,22 @@
-﻿    using Microsoft.AspNet.Identity;
-    using Microsoft.AspNet.Identity.Owin;
-    using Microsoft.Owin.Security;
-    using NewsSite.Data;
-    using NewsSite.Models;
-    using NewsSite.Models.ViewModel;
-    using SendGrid;
-    using SendGrid.Helpers.Mail;
-    using System;
-    using System.IO;
-    using System.Linq;
+﻿using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.Owin;
+using Microsoft.Owin.Security;
+using NewsSite.Data;
+using NewsSite.Models;
+using NewsSite.Models.ViewModel;
+using System;
+using System.IO;
+using System.Linq;
 using System.Net;
 using System.Net.Mail;
 using System.Threading.Tasks;
-    using System.Web;
-    using System.Web.Mvc;
+using System.Web;
+using System.Web.Mvc;
 
-    namespace NewsSite.Controllers
-    {
-        [Authorize]
+namespace NewsSite.Controllers
+{
+    [Route]
+    [Authorize]
         public class AccountController : Controller
         {
 
